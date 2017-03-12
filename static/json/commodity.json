@@ -1,0 +1,47 @@
+[
+  {
+    "commodityId": 1,
+    "title": "苹果(apple) iPhone 7 Plus 125G版 4G手机",
+    "price": 2500,
+    "img": "shopping1.jpg",
+    "rest": 2490,
+    "type": 1,
+    "finalCode": ""
+  },
+  {
+    "commodityId": 4,
+    "title": "红米 4S",
+    "price": 3459,
+    "img": "shopping2.jpg",
+    "rest": 1600,
+    "type": 1,
+    "finalCode": ""
+  },
+  {
+    "commodityId": 2,
+    "title": "苹果(apple) iPhone 7 Plus 125G版 4G手机",
+    "price": 2500,
+    "img": "shopping4.jpg",
+    "rest": 0,
+    "type": 0,
+    "finalCode": ""
+  },
+  {
+    "commodityId": 3,
+    "title": "苹果(apple) iPhone 7 Plus 125G版 4G手机",
+    "price": 2500,
+    "img": "shopping5.jpg",
+    "rest": 0,
+    "type": -1,
+    "finalCode": 6
+  },
+  {
+    "commodityId": 5,
+    "title": "飞利浦（PHILIPS）BDM3275UP 32英寸4K超高清 IPS屏 多视窗液晶显示器",
+    "price": 7313,
+    "img": "shopping15.jpg",
+    "rest": 0,
+    "type": -1,
+    "finalCode": 498
+  }
+]
