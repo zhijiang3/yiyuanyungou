@@ -5,7 +5,7 @@
     <ul>
       <li class="item-wrap clearfix" v-for="item in globalData.commodity">
         <div class="item-left left">
-          <p>{{ item.title }}</p>
+          <p v-text="item.title"></p>
           <p class="progress-wrap">
             <span class="progress" v-setWidth="{
               price:item.price,
@@ -14,8 +14,8 @@
           </p>
           <div class="bottom">
             <div class="need left">
-              <p>剩余：<span class="red">{{ item.rest }}</span></p>
-              <p>总需：<span>{{ item.price }}</span></p>
+              <p>剩余：<span class="red" v-text="item.rest"></span></p>
+              <p>总需：<span v-text="item.price"></span></p>
             </div>
             <button>立刻一元云购 |</button>
           </div>
@@ -83,12 +83,12 @@ export default {
     max-width: 100%;
   }
   .item-wrap{
-    margin: 15px 0;
+    margin: 15px 10px;
     padding: 15px 10px;
     background-color: #fff;
   }
   .item-left{
-    width: 225px;
+    width: 210px;
   }
   .item-right{
     width: 110px;
