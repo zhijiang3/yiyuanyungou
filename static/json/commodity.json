@@ -27,10 +27,10 @@
     "price": 2500,
     "img": "shopping4.jpg",
     "rest": 0,
-    "type": 0,
+    "type": -1,
     "createTime": "20170313164104",
-    "doneTime": "2017-03-13 17:00:08",
-    "finalCode": ""
+    "doneTime": "20170313200714",
+    "finalCode": 704
   },
   {
     "commodityId": 3,

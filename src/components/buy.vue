@@ -13,15 +13,25 @@
           <span class="progressBarInner" v-setWidth="{ price: commodity.price, rest: commodity.rest }"></span>
         </div>
         <div class="rest clearfix">
-          <p class="left">剩余：<span v-text="commodity.rest"></span> - <span class="blue" v-text="count"></span></p>
+          <p class="left">剩余：<span :class="{ red: count != 0 }" v-text="commodity.rest - count"></span></p>
           <p class="right">总需：<span v-text="commodity.price"></span></p>
+        </div>
+        <div class="user clearfix">
+          <p class="gray left">
+            用户余额：
+            <span :class="{ red: count != 0 }" v-text=" '￥' + (user.money - count) "></span>
+          </p>
+          <p class="gray right">
+            已购：
+            <span :class="{ blue: count != 0 }" v-text="mixin.total + count"></span>
+          </p>
         </div>
         <div class="count clearfix">
           <p class="left">购买数量：</p>
           <p class="fn right">
             <i @click.stop="minus" :class="{ disabled: count <= 0 }" class="glyphicon glyphicon-minus"></i>
             <input class="countInput blue" type="text" v-model="count">
-            <i @click.stop="plus" :class="{ disabled: count >= commodity.rest }" class="glyphicon glyphicon-plus"></i>
+            <i @click.stop="plus" :class="{ disabled: count >= Math.min(user.money, commodity.rest) }" class="glyphicon glyphicon-plus"></i>
           </p>
         </div>
       </div>
@@ -36,7 +46,7 @@
 export default {
   data() {
     return {
-      count: 1,
+      count: 0,
       commodity: {},
       user: {},
       mixin: {}
@@ -70,38 +80,64 @@ export default {
       this.count--;
     },
     submit() {
-      // 修改参数然后发送数据更改
+      this.user.money = this.user.money - this.count;
+      this.commodity.rest = this.commodity.rest - this.count;
+      this.mixin.total = this.mixin.total + this.count;
+
+      let luckyCode = [];
+      for(let i = 0, len = this.count; i < len; i++) {
+        luckyCode.push(this.commodity.price - (this.commodity.rest - i));
+      }
+      this.mixin.luckyCode = this.mixin.luckyCode.concat(luckyCode);
+
+      if (this.commodity.rest <= 0) {
+        this.commodity.type = 0;
+        this.commodity.doneTime = this.formatNowTime();
+      }
+
       this.$emit("updateData");
       this.close();
     },
+    formatNowTime(){
+      var nowTime = new Date();
+      var timeArr = [
+        nowTime.getFullYear(),
+        nowTime.getMonth() + 1,
+        nowTime.getDate(),
+        nowTime.getHours(),
+        nowTime.getMinutes(),
+        nowTime.getSeconds()
+      ];
+
+      return timeArr.map(item => (item > 10 ? item : "0" + item)).join("");
+    },
     _findCommodity() { // 根据id查找产品
       this.commodity = this.globalData.commodity.filter(item => item.commodityId == this.id)[0];
-      console.log(this.commodity);
     },
     _findUser() { // 根据id查找用户
       this.user = this.globalData.user.filter(item => item.userId == this.userId)[0];
-      console.log(this.user);
     },
     _findMixin() { // 根据商品和用户id查找购买记录
       this.mixin = this.globalData.mixin
         .filter(item => item.commodityId == this.id)[0]
         .busers.filter(item => item.userId == this.userId)[0];
-      console.log(this.mixin);
     }
   },
   watch: {
     count(newCount) {
       newCount = Number(newCount);
 
-      if (newCount < 0 || isNaN(newCount)) {
+      if (newCount <= 0 || isNaN(newCount)) {
         this.count = 0;
         return ;
       }
 
-      if (newCount <= this.commodity.rest) {
+      var min = Math.min(this.user.money, this.commodity.rest);
+
+      if (newCount <= min) {
         this.count = newCount;
       } else {
-        this.count = this.commodity.rest;
+        this.count = min;
       }
     }
   },
@@ -117,6 +153,9 @@ export default {
   },
   created() {
     this.init();
+  },
+  mounted() {
+    document.querySelectorAll("#buy input.countInput")[0].focus();
   }
 };
 </script>
@@ -130,6 +169,15 @@ export default {
     visibility: hidden;
     overflow: hidden;
     display: block;
+  }
+
+  .gray {
+    font-size: 12px !important;
+    color: #999999 !important;
+  }
+
+  .red {
+    color: #c62f2f !important;
   }
 
   #buy {
@@ -284,7 +332,6 @@ export default {
 
   .box .footer .submit {
     text-align: center;
-    border-radius: 4px 4px 0 0;
     background: #c62f2f;
     color: #ffffff;
     padding: 8px;

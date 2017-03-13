@@ -25,13 +25,9 @@
             <div class="right">
               <p class="countDown">
                 结果: 
-                <span
-                  class="red"
-                  v-setCountDown="{
-                    finalCode: commodity.finalCode,
-                    rest: commodity.rest,
-                    type: commodity.type,
-                    luckyCode: commodity.mine.luckyCode }"></span>
+                <span class="red" v-if="commodity.type == -1" v-text="commodity.finalCode"></span>
+                <span class="red" v-if="commodity.type == 1" v-text=" '待开奖' "></span>
+                <span class="red" v-if="commodity.type == 0" v-text=" timeOut['timeOut_' + commodity.commodityId] + ' 秒' "></span>
               </p>
               <div class="button clearfix" :class="{ disabled: (commodity.rest == 0) }">
                 <a
@@ -87,6 +83,10 @@ export default {
         wait: [],
         done: []
       },
+      timeOut: {
+
+      },
+      time: 60,
       userId: ""
     };
   },
@@ -150,10 +150,10 @@ export default {
       var typeName = "";
 
       this.buyCommodity.forEach(function(item, index, arr) {
-
         switch (item.type) {
           case 0:
             typeName = "open";
+            self.getCountDown(item.commodityId);
             break;
           case 1:
             typeName = "wait";
@@ -174,6 +174,7 @@ export default {
       this.filterNotMyCommodity();
       this.commodityClassify();
 
+      // 根据创建时间排序
       for(let item of Object.keys(this.commodityType)) {
         self.commodityType[item] = self.commodityType[item].sort((item1, item2) => item2.createTime - item1.createTime);
       }
@@ -197,6 +198,45 @@ export default {
 
       return typeName;
     },
+    formatTime(time) { // 根据结束时间格式化
+      var year = time.slice(0, 4);
+      var month = time.slice(4, 6);
+      var day = time.slice(6, 8);
+      var hours = time.slice(8, 10);
+      var min = time.slice(10, 12);
+      var sour = time.slice(12);
+
+      var time = new Date( year+"-"+month+"-"+day+" "+hours+":"+min+":"+sour );
+      return time;
+    },
+    getCountDown(commodityId) {
+      var self = this;
+      var nowTime = new Date();
+      var commodity = this.findCommodity(commodityId);
+      var doneTime = this.formatTime(commodity.doneTime);
+      var diffTime = nowTime.getTime() - doneTime;
+      var timeOut = Math.round(self.time - diffTime / 1000);
+
+      this.$set(this.timeOut, "timeOut_" + commodityId, Math.max(0, timeOut));
+
+      (function getResult() {
+        setTimeout(function() {
+          nowTime = new Date();
+          diffTime = nowTime.getTime() - doneTime;
+          timeOut = Math.round(self.time - diffTime / 1000);
+
+          if (timeOut <= 0) {
+            commodity.type = -1;
+            commodity.finalCode = Math.round(Math.random() * commodity.price + 1);
+            self.initMyShop();
+            return ;
+          }
+
+          self.timeOut['timeOut_' + commodityId] = timeOut;
+          getResult();
+        }, 1000);
+      } ());
+    },
     lucky(luckyCode, finalCode) {
       return luckyCode.some(function findCode(code) {
         return code === finalCode
@@ -217,50 +257,6 @@ export default {
     setWidth(el, binding) { // 设置进度条指令
       var count = (1 - binding.value.rest / binding.value.price) * 100;
       el.style.width = count.toFixed(2) + "%";
-    },
-    setCountDown(el, binding) { // 设置结果指令
-      var self = this;
-      var timeOut = 60;
-
-      function findCode(code) {
-        return code === binding.value.finalCode;
-      }
-
-      switch (binding.value.type) {
-        case -1:
-          el.innerHTML = binding.value.finalCode;
-          break;
-
-        case 1:
-          el.innerHTML = "待开奖";
-          break;
-
-        case 0:
-          if (binding.value.rest === 0){
-            if (el.timeOut != undefined) {
-              return ;
-            }
-            el.timeOut = timeOut;
-
-            // 倒计时
-            (function countDown() {
-              el.innerHTML = --el.timeOut + "秒";
-
-              if (el.timeOut <= 0) {
-                // 执行倒计时结束事件
-                return ;
-              }
-
-              setTimeout(function() {
-                countDown();
-              }, 1000);
-            })();
-          } else {
-
-            el.innerHTML = "错误";
-          }
-          break;
-      }
     }
   }
 }
