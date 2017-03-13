@@ -45,7 +45,7 @@
                   class="link"
                   href=""
                   key="notdisabled"
-                  @click.prevent.stop="click">继续云购</a>
+                  @click.prevent.stop="showBuy(commodity.commodityId)">继续云购</a>
                 <span class="spacer"></span>
                 <i class="cart glyphicon glyphicon-shopping-cart"></i>
               </div>
@@ -63,6 +63,13 @@
         <div class="final" v-if="lucky(commodity.mine.luckyCode, commodity.finalCode)">中奖</div>
       </div>
     </div>
+    <buy
+      v-if="buy.show"
+      @closeBuy="closeBuy"
+      @updateData="updateData"
+      :id="buy.commodityId"
+      :userId="userId"
+      :globalData="globalData"></buy>
   </div>
 </template>
 
@@ -71,6 +78,10 @@ export default {
   data() {
     return {
       buyCommodity: [],
+      buy: {
+        show: false,
+        commodityId: -1
+      },
       commodityType: {
         open: [],
         wait: [],
@@ -83,6 +94,9 @@ export default {
     globalData: {
       type: Object
     }
+  },
+  components: {
+    "buy": require("@/components/buy.vue")
   },
   created() {
     this.$emit("routerTitleEvent", "我的云购");
@@ -104,12 +118,19 @@ export default {
     },
     filterNotMyCommodity() { // 过滤掉不是"我"购买的商品
       var self = this;
+      this.buyCommodity = [];
 
       this.globalData.mixin.forEach(function(item, index, arr) {
         item.busers.forEach(function(bItem, bIndex, bArr) {
           if (bItem.userId == self.userId) { // 这个商品是我买的
 
-            var shop = self.findCommodity(item.commodityId);
+            // 深复制一份
+            var commodity = self.findCommodity(item.commodityId);
+            var shop = {};
+
+            for(let item in commodity) {
+              shop[item] = commodity[item];
+            }
 
             shop.mine = {
               "total": bItem.total,
@@ -123,6 +144,9 @@ export default {
     },
     commodityClassify() { // 商品分类
       var self = this;
+      for (let i in this.commodityType) {
+        this.commodityType[i] = [];
+      }
       var typeName = "";
 
       this.buyCommodity.forEach(function(item, index, arr) {
@@ -146,8 +170,13 @@ export default {
       });
     },
     initMyShop() { // 初始化"我"的商品
+      var self = this;
       this.filterNotMyCommodity();
       this.commodityClassify();
+
+      for(let item of Object.keys(this.commodityType)) {
+        self.commodityType[item] = self.commodityType[item].sort((item1, item2) => item2.createTime - item1.createTime);
+      }
     },
     getTitleOfCommodityType(key) { // 根据传入参数获取标题
       var typeName = "";
@@ -172,6 +201,16 @@ export default {
       return luckyCode.some(function findCode(code) {
         return code === finalCode
       });
+    },
+    showBuy(commodityId) { // 继续云购
+      this.buy.commodityId = commodityId;
+      this.buy.show = true;
+    },
+    closeBuy() {
+      this.buy.show = false;
+    },
+    updateData() {
+      this.initMyShop();
     }
   },
   directives: {
@@ -362,6 +401,7 @@ export default {
   }
 
   #myShopping .box .boxContent .progressBar .progressBarInner {
+    transition: width 0.3s;
     background-color: #c62f2f;
     max-width: 100%;
     min-width: 2%;
