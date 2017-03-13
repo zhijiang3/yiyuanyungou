@@ -1,23 +1,25 @@
 <template>
-  <ul class="bottomNav">
-    <li><router-link to="/home"><i class="glyphicon glyphicon-home"></i>主页</router-link></li>
-    <li><router-link to="/postshop"><i class="glyphicon glyphicon-bullhorn"></i>发布商品</router-link></li>
-    <li><router-link :to="{ name: 'myShopping', params: { userId: 1 } }"><i class="glyphicon glyphicon-bell"></i>我的云购</router-link></li>
-  </ul>
+  <transition
+    name="bottom-bar"
+    enter-class="b-e"
+    leave-class="b-l"
+    enter-active-class="b-e-a"
+    leave-active-class="b-l-a">
+    <ul class="bottomNav" v-show="isShow">
+      <li><router-link to="/home"><i class="glyphicon glyphicon-home"></i>主页</router-link></li>
+      <li><router-link to="/postshop"><i class="glyphicon glyphicon-bullhorn"></i>发布商品</router-link></li>
+      <li><router-link :to="{ name: 'myShopping', params: { userId: 1 } }"><i class="glyphicon glyphicon-bell"></i>我的云购</router-link></li>
+    </ul>
+  </transition>
 </template>
 
 <script>
 export default {
   data() {
     return {
-      touch: {
-        start: {
-          y: 0
-        },
-        end: {
-          y: 0
-        }
-      }
+      CY: 0,
+      newDY: 0,
+      isShow: true
     };
   },
   methods: {
@@ -25,16 +27,26 @@ export default {
       this._touch();
     },
     _touch() {
-      document.addEventListener("touchstart", function(e) {
+      var self = this;
 
+      document.addEventListener("touchstart", function(e) {
+        self.CY = e.touches[0].clientY;
       });
 
       document.addEventListener("touchmove", function(e) {
+        var MY = e.changedTouches[0].clientY;
 
-      });
+        self.newDY = self.CY - MY;
+        self.newDY = Math.max(0, self.newDY);
 
-      document.addEventListener("touchend", function(e) {
-
+        if (self.newDY > 0) {
+          self.isShow = false;
+          self.CY = MY;
+        } else {
+          if (!self.isShow) {
+            self.isShow = true;
+          }
+        }
       });
     }
   },
@@ -47,6 +59,7 @@ export default {
 <style scoped>
   .bottomNav {
     position: fixed;
+    z-index: 9;
     bottom: 0;
     left: 0;
     right: 0;
@@ -76,5 +89,22 @@ export default {
     color: #c52f30;
     background-color: #fff;
     border-top: 2px solid #c52f30;
+  }
+
+  .b-e {
+    transform: translateY(100%);
+  }
+
+  .b-l {
+    transform: translateY(0%);
+  }
+
+  .b-l-a {
+    transform: translateY(100%);
+  }
+
+  .b-l-a,
+  .b-e-a {
+    transition: transform 0.3s;
   }
 </style>

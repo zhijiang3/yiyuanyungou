@@ -6,6 +6,8 @@
     "img": "shopping1.jpg",
     "rest": 2490,
     "type": 1,
+    "createTime": "20170313164017",
+    "doneTime": "",
     "finalCode": ""
   },
   {
@@ -15,6 +17,8 @@
     "img": "shopping2.jpg",
     "rest": 1600,
     "type": 1,
+    "createTime": "20170313164059",
+    "doneTime": "",
     "finalCode": ""
   },
   {
@@ -24,6 +28,8 @@
     "img": "shopping4.jpg",
     "rest": 0,
     "type": 0,
+    "createTime": "20170313164104",
+    "doneTime": "2017-03-13 17:00:08",
     "finalCode": ""
   },
   {
@@ -33,6 +39,8 @@
     "img": "shopping5.jpg",
     "rest": 0,
     "type": -1,
+    "createTime": "20170313164106",
+    "doneTime": "20170303164106",
     "finalCode": 6
   },
   {
@@ -42,6 +50,8 @@
     "img": "shopping15.jpg",
     "rest": 0,
     "type": -1,
+    "createTime": "20170313164108",
+    "doneTime": "20170313014108",
     "finalCode": 498
   }
 ]
