@@ -41,20 +41,20 @@
 		color: #9b9696;
 	}
 	#done button{
-		background-color: rgb(197,43,43);
+		background-color: #fff;
 		border: none;
 		display: block;
 		width: 80%;
 		height: 50px;
 		line-height: 50px;
+		border: 1px solid black;
 		margin: 20px auto;
-		color: #fff;
 		font-size: 16px;
 	}
 	#done button:nth-of-type(1){
 		margin-top: 50px;
 	}
 	a{
-		color: #fff;
+		color: black;
 	}
 </style>

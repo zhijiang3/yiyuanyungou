@@ -17,7 +17,11 @@
               <p>剩余：<span class="red" v-text="item.rest"></span></p>
               <p>总需：<span v-text="item.price"></span></p>
             </div>
-            <button>立刻一元云购 |</button>
+            <button>
+              <a href="javascripts:void()" class="left">立刻1元去云购</a>
+              <span class="spacer left"></span>
+              <i class="cart glyphicon glyphicon-shopping-cart left"></i>
+            </button>
           </div>
         </div>
           <div class="item-right right">
@@ -104,12 +108,22 @@ export default {
     margin-top: 3px;
     background-color: rgb(197,47,47);
     color: #fff;
-    padding: 5px 30px 5px 5px;
+    padding: 5px;
     float: right;
     border: none;
-    background-image: url('../../static/img/home/shoppcar.png');
-    background-repeat: no-repeat;
-    background-position: 100px center;
+  }
+  .bottom button a{
+    color: #fff;
+  }
+  .bottom button .spacer{
+    height: 18px;
+    width: 2px;
+    background-color: #fff;
+    display: inline-block;
+    margin-left: 5px;
+  }
+  .bottom button .cart{
+    margin: 2px 0 0 5px;
   }
   .left{
     float: left;
