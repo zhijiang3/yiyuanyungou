@@ -47,15 +47,16 @@
 		color: #9b9696;
 	}
 
-	#done .btn{
-		background-color: rgb(197,43,43);
+	#done .btn {
+    background-color: #fff;
 		border: none;
 		display: block;
 		width: 80%;
 		height: 45px;
 		line-height: 45px;
+		border: 1px solid black;
+
 		margin: 20px auto;
-		color: #fff;
 		font-size: 16px;
 		text-align: center;
 	}
@@ -65,6 +66,6 @@
 	}
 
 	a{
-		color: #fff;
+		color: black;
 	}
 </style>
