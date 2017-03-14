@@ -107,7 +107,7 @@ export default {
     padding: 5px 30px 5px 5px;
     float: right;
     border: none;
-    background-image: url('../../static/img/home/shoppcar.png');
+    /*background-image: url('../../static/img/home/shoppcar.png');*/
     background-repeat: no-repeat;
     background-position: 100px center;
   }

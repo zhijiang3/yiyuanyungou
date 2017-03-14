@@ -45,14 +45,14 @@
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 1;
+    z-index: 10;
   }
 
   .topBar {
     color: #fff;
     background-color: rgb(198,47,47);
     position: relative;
-    z-index: 9;
+    z-index: 11;
   }
 
   .topBar .title {

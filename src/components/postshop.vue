@@ -38,7 +38,16 @@
 
 					// 创建日期
 					let date = new Date();
-					let curDate = date.getFullYear().toString() + (date.getMonth() >= 10? date.getMonth().toString():'0' + date.getMonth().toString()) + (date.getDate() >= 10? date.getDate(): '0' + date.getDate()) + (date.getHours() >= 10? + date.getMinutes().toString(): '0' + date.getMinutes().toString()) + (date.getSeconds() >= 10? date.getSeconds().toString():'0'+date.getSeconds().toString());
+					let timeArr = [
+						date.getFullYear(),
+						date.getMonth() + 1,
+						date.getDate(),
+						date.getHours(),
+						date.getMinutes(),
+						date.getSeconds()
+					];
+
+					timeArr = timeArr.map(item => (item > 10 ? item : "0" + item)).join("");
 
 					let newModi = {
 						"title": this.modiName,
@@ -48,7 +57,7 @@
 						"rest": this.modiMoney,
 						"type": 1,
 						"finalCode": '',
-						"createTime": curDate,
+						"createTime": timeArr,
 						"doneTime": ''
 					};
 
@@ -58,7 +67,7 @@
 					this.globalData.commodity.push(newModi);
 
 					// 路由跳转
-					this.$router.push({
+					this.$router.replace({
 						path: '/done'
 					});
 					return;
@@ -72,6 +81,11 @@
 </script>
 
 <style scoped>
+	input,
+	select {
+		outline: 0;
+	}
+
 	.formWrap{
 		padding:0 20px;
 	}

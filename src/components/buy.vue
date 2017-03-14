@@ -36,7 +36,7 @@
         </div>
       </div>
       <div class="footer">
-        <p class="submit" @click.stop="submit">提交</p>
+        <p class="submit" :class="{ disabled: count == 0 }" @click.stop="submit">提交</p>
       </div>
     </div>
   </div>
@@ -80,14 +80,18 @@ export default {
       this.count--;
     },
     submit() {
-      this.user.money = this.user.money - this.count;
-      this.commodity.rest = this.commodity.rest - this.count;
-      this.mixin.total = this.mixin.total + this.count;
+      if (this.count == 0) {
+        return ;
+      }
 
       let luckyCode = [];
-      for(let i = 0, len = this.count; i < len; i++) {
+      for(let i = 1, len = this.count; i <= len; i++) {
         luckyCode.push(this.commodity.price - (this.commodity.rest - i));
       }
+
+      this.user.money = Math.max(0, this.user.money - this.count);
+      this.commodity.rest = Math.max(0, this.commodity.rest - this.count);
+      this.mixin.total = Math.min(this.mixin.total + this.count, this.commodity.price);
       this.mixin.luckyCode = this.mixin.luckyCode.concat(luckyCode);
 
       if (this.commodity.rest <= 0) {
@@ -181,8 +185,12 @@ export default {
   }
 
   #buy {
-    position: relative;
+    position: fixed;
     z-index: 10;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0
   }
 
   .mask {
@@ -335,5 +343,9 @@ export default {
     background: #c62f2f;
     color: #ffffff;
     padding: 8px;
+  }
+
+  .box .footer .disabled {
+    background: #cccccc;
   }
 </style>

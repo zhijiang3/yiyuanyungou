@@ -1,13 +1,17 @@
 <template>
   <div id="myShopping">
-    <div v-for="(type, key) in commodityType" key="div">
+    <transition-group name="flip-list" tag="div">
+    
+    <div :key=" 'shopping_' + key " v-for="(type, key) in commodityType" key="div">
 
       <h2
         class="title"
         v-show="type.length > 0"
         v-text="getTitleOfCommodityType(key)"></h2>
 
-      <div class="box" v-for="commodity in type">
+      <transition-group name="flip-list-box" tag="div">
+
+      <div class="box" :key=" 'box_' + commodity.commodityId " v-for="commodity in type">
         <p class="boxTitle" v-text="commodity.title"></p>
         <div class="boxImg"><img :src="'./static/img/commodity/' + commodity.img"></div>
         <div class="boxContent">
@@ -52,13 +56,23 @@
               <p>剩余: <span class="red">{{ commodity.rest }}</span></p>
               <p>总需: <span>{{ commodity.price }}</span></p>
             </div>
-            
           </div>
 
         </div>
         <div class="final" v-if="lucky(commodity.mine.luckyCode, commodity.finalCode)">中奖</div>
       </div>
+
+      </transition-group>
     </div>
+
+    </transition-group>
+    <transition
+      name="buy"
+      enter-class="b-e"
+      leave-class="b-l"
+      enter-active-class="b-e-a"
+      leave-active-class="b-l-a">
+    
     <buy
       v-if="buy.show"
       @closeBuy="closeBuy"
@@ -66,6 +80,8 @@
       :id="buy.commodityId"
       :userId="userId"
       :globalData="globalData"></buy>
+
+    </transition>
   </div>
 </template>
 
@@ -86,7 +102,7 @@ export default {
       timeOut: {
 
       },
-      time: 60,
+      time: 3,
       userId: ""
     };
   },
@@ -173,11 +189,7 @@ export default {
       var self = this;
       this.filterNotMyCommodity();
       this.commodityClassify();
-
-      // 根据创建时间排序
-      for(let item of Object.keys(this.commodityType)) {
-        self.commodityType[item] = self.commodityType[item].sort((item1, item2) => item2.createTime - item1.createTime);
-      }
+      this.sortShopping();
     },
     getTitleOfCommodityType(key) { // 根据传入参数获取标题
       var typeName = "";
@@ -236,6 +248,17 @@ export default {
           getResult();
         }, 1000);
       } ());
+    },
+    sortShopping() {
+      var self = this;
+
+      for(let item of Object.keys(this.commodityType)) {
+        if (item == "wait") {
+          self.commodityType[item] = self.commodityType[item].sort((item1, item2) => item1.rest - item2.rest);
+        } else {
+          self.commodityType[item] = self.commodityType[item].sort((item1, item2) => item2.doneTime - item1.doneTime);
+        }
+      }
     },
     lucky(luckyCode, finalCode) {
       return luckyCode.some(function findCode(code) {
@@ -431,6 +454,23 @@ export default {
   #myShopping .box .inner .right .disabled .cart {
     cursor: not-allowed;
   }
+  
+  .b-e,
+  .b-l-a {
+    opacity: 0;
+  }
 
+  .b-e-a,
+  .b-l-a {
+    transition: opacity 0.4s;
+  }
+
+  .flip-list-move {
+    transition: transform 1s;
+  }
+
+  .flip-list-box-move {
+    transition: transform 1s;
+  }
 
 </style>
