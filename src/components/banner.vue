@@ -42,7 +42,7 @@ export default {
   },
   methods: {
     initBanner() {
-      this.banner = this.globalData.banner;
+      this.banner = this.globalData.banner.sort((item1, item2) => item2.createTime - item1.createTime).slice(0, 5);
       this.autoPlay();
       this.initEvents();
     },
@@ -116,7 +116,7 @@ export default {
 
       document.addEventListener("touchmove", function(e) {
         if (self._findBanner(e.target, "banner")) {
-          e.preventDefault();
+          e.stopPropagation();
           self.stopPlay();
 
           let delta_x = e.changedTouches[0].pageX - self.touch.start.x;
@@ -134,7 +134,7 @@ export default {
 
           itemInner.style.transform = 'translateX(' + translateX + 'px)';
         }
-      }, false);
+      }, true);
 
       document.addEventListener("touchend", function(e) {
         if (self._findBanner(e.target, "banner")) {

@@ -46,7 +46,7 @@ export default {
 
           self.$set(self.globalData, item.config.url.slice(start, end), item.data);
         });
-
+        
         self.dataLoading = true;
       })
     ).catch(function(err) {

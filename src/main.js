@@ -5,7 +5,7 @@ import App from './App'
 import router from './router'
 import es6Promise from "es6-promise"
 
-es6Promise.polyfill();
+es6Promise.polyfill()
 
 Vue.use(VueAxios, Axios)
 Vue.config.productionTip = false

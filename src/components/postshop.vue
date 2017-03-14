@@ -71,7 +71,7 @@
 						"rest": this.modi.modiMoney,
 						"type": 1,
 						"finalCode": '',
-						"createTime": curDate,
+						"createTime": timeArr,
 						"doneTime": ''
 					};
 
@@ -98,6 +98,11 @@
 </script>
 
 <style scoped>
+	input,
+	select {
+		outline: 0;
+	}
+
 	.formWrap{
 		padding:0 20px;
 	}

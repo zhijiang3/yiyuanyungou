@@ -1,13 +1,17 @@
 <template>
   <div id="myShopping">
-    <div v-for="(type, key) in commodityType" key="div">
+    <transition-group name="flip-list" tag="div">
+    
+    <div :key=" 'shopping_' + key " v-for="(type, key) in commodityType" key="div">
 
       <h2
         class="title"
         v-show="type.length > 0"
         v-text="getTitleOfCommodityType(key)"></h2>
 
-      <div class="box" v-for="commodity in type">
+      <transition-group name="flip-list-box" tag="div">
+
+      <div class="box" :key=" 'box_' + commodity.commodityId " v-for="commodity in type">
         <p class="boxTitle" v-text="commodity.title"></p>
         <div class="boxImg"><img :src="'./static/img/commodity/' + commodity.img"></div>
         <div class="boxContent">
@@ -25,13 +29,9 @@
             <div class="right">
               <p class="countDown">
                 结果: 
-                <span
-                  class="red"
-                  v-setCountDown="{
-                    finalCode: commodity.finalCode,
-                    rest: commodity.rest,
-                    type: commodity.type,
-                    luckyCode: commodity.mine.luckyCode }"></span>
+                <span class="red" v-if="commodity.type == -1" v-text="commodity.finalCode"></span>
+                <span class="red" v-if="commodity.type == 1" v-text=" '待开奖' "></span>
+                <span class="red" v-if="commodity.type == 0" v-text=" timeOut['timeOut_' + commodity.commodityId] + ' 秒' "></span>
               </p>
               <div class="button clearfix" :class="{ disabled: (commodity.rest == 0) }">
                 <a
@@ -45,7 +45,7 @@
                   class="link"
                   href=""
                   key="notdisabled"
-                  @click.prevent.stop="click">继续云购</a>
+                  @click.prevent.stop="showBuy(commodity.commodityId)">继续云购</a>
                 <span class="spacer"></span>
                 <i class="cart glyphicon glyphicon-shopping-cart"></i>
               </div>
@@ -56,13 +56,32 @@
               <p>剩余: <span class="red">{{ commodity.rest }}</span></p>
               <p>总需: <span>{{ commodity.price }}</span></p>
             </div>
-            
           </div>
 
         </div>
         <div class="final" v-if="lucky(commodity.mine.luckyCode, commodity.finalCode)">中奖</div>
       </div>
+
+      </transition-group>
     </div>
+
+    </transition-group>
+    <transition
+      name="buy"
+      enter-class="b-e"
+      leave-class="b-l"
+      enter-active-class="b-e-a"
+      leave-active-class="b-l-a">
+    
+    <buy
+      v-if="buy.show"
+      @closeBuy="closeBuy"
+      @updateData="updateData"
+      :id="buy.commodityId"
+      :userId="userId"
+      :globalData="globalData"></buy>
+
+    </transition>
   </div>
 </template>
 
@@ -71,11 +90,19 @@ export default {
   data() {
     return {
       buyCommodity: [],
+      buy: {
+        show: false,
+        commodityId: -1
+      },
       commodityType: {
         open: [],
         wait: [],
         done: []
       },
+      timeOut: {
+
+      },
+      time: 3,
       userId: ""
     };
   },
@@ -83,6 +110,9 @@ export default {
     globalData: {
       type: Object
     }
+  },
+  components: {
+    "buy": require("@/components/buy.vue")
   },
   created() {
     this.$emit("routerTitleEvent", "我的云购");
@@ -104,12 +134,19 @@ export default {
     },
     filterNotMyCommodity() { // 过滤掉不是"我"购买的商品
       var self = this;
+      this.buyCommodity = [];
 
       this.globalData.mixin.forEach(function(item, index, arr) {
         item.busers.forEach(function(bItem, bIndex, bArr) {
           if (bItem.userId == self.userId) { // 这个商品是我买的
 
-            var shop = self.findCommodity(item.commodityId);
+            // 深复制一份
+            var commodity = self.findCommodity(item.commodityId);
+            var shop = {};
+
+            for(let item in commodity) {
+              shop[item] = commodity[item];
+            }
 
             shop.mine = {
               "total": bItem.total,
@@ -123,13 +160,16 @@ export default {
     },
     commodityClassify() { // 商品分类
       var self = this;
+      for (let i in this.commodityType) {
+        this.commodityType[i] = [];
+      }
       var typeName = "";
 
       this.buyCommodity.forEach(function(item, index, arr) {
-
         switch (item.type) {
           case 0:
             typeName = "open";
+            self.getCountDown(item.commodityId);
             break;
           case 1:
             typeName = "wait";
@@ -146,8 +186,10 @@ export default {
       });
     },
     initMyShop() { // 初始化"我"的商品
+      var self = this;
       this.filterNotMyCommodity();
       this.commodityClassify();
+      this.sortShopping();
     },
     getTitleOfCommodityType(key) { // 根据传入参数获取标题
       var typeName = "";
@@ -168,60 +210,76 @@ export default {
 
       return typeName;
     },
+    formatTime(time) { // 根据结束时间格式化
+      var year = time.slice(0, 4);
+      var month = time.slice(4, 6);
+      var day = time.slice(6, 8);
+      var hours = time.slice(8, 10);
+      var min = time.slice(10, 12);
+      var sour = time.slice(12);
+
+      var time = new Date( year+"-"+month+"-"+day+" "+hours+":"+min+":"+sour );
+      return time;
+    },
+    getCountDown(commodityId) {
+      var self = this;
+      var nowTime = new Date();
+      var commodity = this.findCommodity(commodityId);
+      var doneTime = this.formatTime(commodity.doneTime);
+      var diffTime = nowTime.getTime() - doneTime;
+      var timeOut = Math.round(self.time - diffTime / 1000);
+
+      this.$set(this.timeOut, "timeOut_" + commodityId, Math.max(0, timeOut));
+
+      (function getResult() {
+        setTimeout(function() {
+          nowTime = new Date();
+          diffTime = nowTime.getTime() - doneTime;
+          timeOut = Math.round(self.time - diffTime / 1000);
+
+          if (timeOut <= 0) {
+            commodity.type = -1;
+            commodity.finalCode = Math.round(Math.random() * commodity.price + 1);
+            self.initMyShop();
+            return ;
+          }
+
+          self.timeOut['timeOut_' + commodityId] = timeOut;
+          getResult();
+        }, 1000);
+      } ());
+    },
+    sortShopping() {
+      var self = this;
+
+      for(let item of Object.keys(this.commodityType)) {
+        if (item == "wait") {
+          self.commodityType[item] = self.commodityType[item].sort((item1, item2) => item1.rest - item2.rest);
+        } else {
+          self.commodityType[item] = self.commodityType[item].sort((item1, item2) => item2.doneTime - item1.doneTime);
+        }
+      }
+    },
     lucky(luckyCode, finalCode) {
       return luckyCode.some(function findCode(code) {
         return code === finalCode
       });
+    },
+    showBuy(commodityId) { // 继续云购
+      this.buy.commodityId = commodityId;
+      this.buy.show = true;
+    },
+    closeBuy() {
+      this.buy.show = false;
+    },
+    updateData() {
+      this.initMyShop();
     }
   },
   directives: {
     setWidth(el, binding) { // 设置进度条指令
       var count = (1 - binding.value.rest / binding.value.price) * 100;
       el.style.width = count.toFixed(2) + "%";
-    },
-    setCountDown(el, binding) { // 设置结果指令
-      var self = this;
-      var timeOut = 60;
-
-      function findCode(code) {
-        return code === binding.value.finalCode;
-      }
-
-      switch (binding.value.type) {
-        case -1:
-          el.innerHTML = binding.value.finalCode;
-          break;
-
-        case 1:
-          el.innerHTML = "待开奖";
-          break;
-
-        case 0:
-          if (binding.value.rest === 0){
-            if (el.timeOut != undefined) {
-              return ;
-            }
-            el.timeOut = timeOut;
-
-            // 倒计时
-            (function countDown() {
-              el.innerHTML = --el.timeOut + "秒";
-
-              if (el.timeOut <= 0) {
-                // 执行倒计时结束事件
-                return ;
-              }
-
-              setTimeout(function() {
-                countDown();
-              }, 1000);
-            })();
-          } else {
-
-            el.innerHTML = "错误";
-          }
-          break;
-      }
     }
   }
 }
@@ -362,6 +420,7 @@ export default {
   }
 
   #myShopping .box .boxContent .progressBar .progressBarInner {
+    transition: width 0.3s;
     background-color: #c62f2f;
     max-width: 100%;
     min-width: 2%;
@@ -395,6 +454,23 @@ export default {
   #myShopping .box .inner .right .disabled .cart {
     cursor: not-allowed;
   }
+  
+  .b-e,
+  .b-l-a {
+    opacity: 0;
+  }
 
+  .b-e-a,
+  .b-l-a {
+    transition: opacity 0.4s;
+  }
+
+  .flip-list-move {
+    transition: transform 1s;
+  }
+
+  .flip-list-box-move {
+    transition: transform 1s;
+  }
 
 </style>
