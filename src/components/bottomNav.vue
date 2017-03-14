@@ -30,10 +30,12 @@ export default {
       var self = this;
 
       document.addEventListener("touchstart", function(e) {
+
         self.CY = e.touches[0].clientY;
       });
 
       document.addEventListener("touchmove", function(e) {
+
         var MY = e.changedTouches[0].clientY;
 
         self.newDY = self.CY - MY;

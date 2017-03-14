@@ -102,7 +102,7 @@ export default {
       timeOut: {
 
       },
-      time: 3,
+      time: 60,
       userId: ""
     };
   },
@@ -254,7 +254,7 @@ export default {
 
       for(let item of Object.keys(this.commodityType)) {
         if (item == "wait") {
-          self.commodityType[item] = self.commodityType[item].sort((item1, item2) => item1.rest - item2.rest);
+          self.commodityType[item] = self.commodityType[item].sort((item1, item2) => (1 - item2.rest / item2.price) - (1 - item1.rest / item1.price));
         } else {
           self.commodityType[item] = self.commodityType[item].sort((item1, item2) => item2.doneTime - item1.doneTime);
         }

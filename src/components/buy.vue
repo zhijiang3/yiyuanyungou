@@ -113,7 +113,7 @@ export default {
         nowTime.getSeconds()
       ];
 
-      return timeArr.map(item => (item > 10 ? item : "0" + item)).join("");
+      return timeArr.map(item => (item >= 10 ? item : "0" + item)).join("");
     },
     _findCommodity() { // 根据id查找产品
       this.commodity = this.globalData.commodity.filter(item => item.commodityId == this.id)[0];
@@ -122,9 +122,21 @@ export default {
       this.user = this.globalData.user.filter(item => item.userId == this.userId)[0];
     },
     _findMixin() { // 根据商品和用户id查找购买记录
-      this.mixin = this.globalData.mixin
-        .filter(item => item.commodityId == this.id)[0]
-        .busers.filter(item => item.userId == this.userId)[0];
+      var commodityMixin = this.globalData.mixin.filter(item => item.commodityId == this.id)[0];
+
+      if (commodityMixin.busers.length > 0) {
+        this.mixin = commodityMixin.busers.filter(item => item.userId == this.userId)[0];
+      } else {
+        
+        let busers = {
+          "userId": this.userId,
+          "total": 0,
+          "luckyCode": []
+        };
+
+        commodityMixin.busers.push(busers)
+        this.mixin = busers;
+      }
     }
   },
   watch: {

@@ -14,7 +14,7 @@
       }
     ]
   },
-    {
+  {
     "commodityId": 2,
     "busers": [
       {
@@ -24,7 +24,7 @@
       }
     ]
   },
-    {
+  {
     "commodityId": 3,
     "busers": [
       {
@@ -34,7 +34,7 @@
       }
     ]
   },
-    {
+  {
     "commodityId": 4,
     "busers": [
       {
@@ -44,7 +44,7 @@
       }
     ]
   },
-    {
+  {
     "commodityId": 5,
     "busers": [
       {
