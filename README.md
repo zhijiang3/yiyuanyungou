@@ -2,8 +2,7 @@
 
 > 一元云购
 
-## Build Setup
-
+## 使用方式
 ``` bash
 # install dependencies
 npm install
