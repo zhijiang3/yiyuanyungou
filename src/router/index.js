@@ -19,8 +19,13 @@ export default new Router({
     },
     {
       name: "myShopping",
-      path: "/myShopping/:userId",
+      path: "/myShopping",
       component: require("../components/myShopping.vue")
+    },
+    {
+      path: "/details",
+      name: "details",
+      component: require("../components/details.vue")
     },
     {
       name: "done",

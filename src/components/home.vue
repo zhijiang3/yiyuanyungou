@@ -12,18 +12,12 @@
         <div class="item-left clearfix">
           <p class="title" v-text="item.title"></p>
           <p class="progress-wrap">
-            <span class="progress" v-setWidth="{
-              price:item.price,
-              rest:item.rest
-              }"></span>
+            <span class="progress" v-setWidth="{ price:item.price, rest:item.rest }"></span>
           </p>
           <div class="bottom">
             <div class="button right">
-              <a
-                  class="link"
-                  href=""
-                  @click.prevent.stop="showBuy(item.commodityId)">立刻1元云购</a>
-               <span class="spacer"></span>
+              <a class="link" href="" @click.prevent.stop="showBuy(item.commodityId)">立刻1元云购</a>
+              <span class="spacer"></span>
               <i class="cart glyphicon glyphicon-shopping-cart"></i>
             </div>
             <div class="need left">
@@ -83,11 +77,11 @@ export default {
       this.filterCommodity();
       this.sortCommodity();
     },
-    filterCommodity() {
-      this.commoditys = this.globalData.commodity.filter(item => item.type == 1);
+    filterCommodity() { // 过滤掉已经结束和即将结束的商品
+      this.commoditys = this.globalData.commodity.filter(item => item.type == 1 );
     },
-    sortCommodity() {
-      this.commoditys = this.commoditys.sort((item1, item2) => item2.createTime - item1.createTime);
+    sortCommodity(commoditys) { // 排序商品
+      this.commoditys.sort((item1, item2) => (item2.createTime - item1.createTime));
     },
     showBuy(id) {
       this.buy.commodityId = id;

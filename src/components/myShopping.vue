@@ -1,6 +1,5 @@
 <template>
   <div id="myShopping">
-    <transition-group name="flip-list" tag="div">
     
     <div :key=" 'shopping_' + key " v-for="(type, key) in commodityType" key="div">
 
@@ -65,7 +64,6 @@
       </transition-group>
     </div>
 
-    </transition-group>
     <transition
       name="buy"
       enter-class="b-e"
@@ -103,7 +101,7 @@ export default {
 
       },
       time: 60,
-      userId: ""
+      userId: 1
     };
   },
   props: {
@@ -118,7 +116,6 @@ export default {
     this.$emit("routerTitleEvent", "我的云购");
   },
   mounted() {
-    this.userId = this.$route.params.userId;
     this.initMyShop();
   },
   methods: {

@@ -16,7 +16,7 @@
 <script>
   export default {
     created () {
-      this.$emit('routerTitleEvent','发布详情');
+      this.$emit('routerTitleEvent', "发布详情");
     }
   }
 </script>
@@ -32,6 +32,7 @@
     height: 100px;
     border-radius: 50%;
     margin: 0 auto;
+    border: 1px solid #cccccc;
   }
 
   .ok{
@@ -48,13 +49,13 @@
   }
 
   #done .btn a{
-    color: #c62f2f;
+    color: #ffffff;
     border: none;
     display: block;
     padding: 10px 0;
     font-size: 16px;
     margin-top: 20px;
-    border: 1px solid #c62f2f;
+    border: 1px solid transparent;
   }
   
   #done .btns{
@@ -63,7 +64,7 @@
   }
 
   #done .btn {
-    background-color: #ffffff;
+    background-color: rgba(198, 47, 47, 0.8);
   }
 
   #done .btns .goOn a{
@@ -71,7 +72,11 @@
     color: #999999;
   }
 
+  #done .btns .goOn {
+    background-color: #ffffff !important;
+  }
+
   #done .btn a:active{
-    background: rgba(240, 240, 240, 0.8);
+    background: rgba(240, 240, 240, 0.3);
   }
 </style>

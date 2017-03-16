@@ -36,7 +36,7 @@
         </div>
       </div>
       <div class="footer">
-        <p class="submit" :class="{ disabled: count == 0 }" @click.stop="submit">提交</p>
+        <p class="submit" :class="{ disabled: count == 0 }" @click.stop="submit">提交订单</p>
       </div>
     </div>
   </div>
@@ -70,8 +70,8 @@ export default {
       document.body.style.overflow = "hidden";
     },
     close() {
-      this.$emit("closeBuy");
       document.body.style.overflow = "auto";
+      this.$emit("closeBuy");
     },
     plus() {
       this.count++;
@@ -84,7 +84,9 @@ export default {
         return ;
       }
 
+      let self = this;
       let luckyCode = [];
+
       for(let i = 1, len = this.count; i <= len; i++) {
         luckyCode.push(this.commodity.price - (this.commodity.rest - i));
       }
@@ -101,6 +103,7 @@ export default {
 
       this.$emit("updateData");
       this.close();
+      
     },
     formatNowTime(){
       var nowTime = new Date();

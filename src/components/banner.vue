@@ -142,9 +142,9 @@ export default {
 
           let delta_x = self.touch.end.x - self.touch.start.x;
 
-          if (delta_x > self.bodyWidth * 0.45) {
+          if (delta_x > self.bodyWidth * 0.55) {
             self._moveLeft();
-          } else if (delta_x < -self.bodyWidth * 0.45) {
+          } else if (delta_x < -self.bodyWidth * 0.55) {
             self._moveRight();
           } else {
             itemInner.style.transform = 'translateX(' + (self.active * -self.bodyWidth) + 'px)';
