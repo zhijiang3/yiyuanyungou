@@ -23,11 +23,6 @@ export default new Router({
       component: require("../components/myShopping.vue")
     },
     {
-      path: "/details",
-      name: "details",
-      component: require("../components/details.vue")
-    },
-    {
       name: "done",
       path: "/done",
       component: require("../components/done.vue")
