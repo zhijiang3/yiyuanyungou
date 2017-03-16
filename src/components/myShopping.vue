@@ -1,7 +1,7 @@
 <template>
   <div id="myShopping">
     
-    <div :key=" 'shopping_' + key " v-for="(type, key) in commodityType" key="div">
+    <div v-for="(type, key) in commodityType">
 
       <h2
         class="title"

@@ -6,9 +6,9 @@
     enter-active-class="b-e-a"
     leave-active-class="b-l-a">
     <ul class="bottomNav" v-show="isShow">
-      <li><router-link to="/home"><i class="glyphicon glyphicon-home"></i>主页</router-link></li>
-      <li><router-link to="/postshop"><i class="glyphicon glyphicon-bullhorn"></i>发布商品</router-link></li>
-      <li><router-link :to="{ name: 'myShopping' }"><i class="glyphicon glyphicon-bell"></i>我的云购</router-link></li>
+      <li><router-link tag="a" to="/home"><i class="glyphicon glyphicon-home"></i>主页</router-link></li>
+      <li><router-link tag="a" to="/postshop"><i class="glyphicon glyphicon-bullhorn"></i>发布商品</router-link></li>
+      <li><router-link tag="a" :to="{ name: 'myShopping' }"><i class="glyphicon glyphicon-bell"></i>我的云购</router-link></li>
     </ul>
   </transition>
 </template>
